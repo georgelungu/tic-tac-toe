@@ -43,47 +43,99 @@ function processHumanCoordinate(input) {
     console.log(`'processHumanCoordinate('${input}')`);
     if (gameTurn % 2 === 0) {
         currentPlayer = 'diamond';
+        displayMessage("Player X's turn");
     } else {
         currentPlayer = 'pets';
+        displayMessage("Player Y's turn"); 
     }
 
     let coordinates = extractCoordinates(input);
-    board[coordinates.x][coordinates.y] = currentPlayer;
 
+    if(coordinates === undefined){
+        displayMessage("Invalid coordinate entered! Please input another value.")
+    }
+    else if(board[coordinates.x][coordinates.y] === ''){
+        board[coordinates.x][coordinates.y] = currentPlayer;
+        gameTurn += 1;
+        if(!isPlayerYHuman){
+            setHTMLvisibilityForInputHumanCoordinates(false);
+            setHTMLvisibilityForInputAiCoordinatesInput(true);
+        }  
+    }
+    else{
+        if(board[coordinates.x][coordinates.y] !== '')
+            displayMessage("Position is already taken on board! Please input another value.");
+    }
+
+    displayBoard(board);
     const winningPlayer = getWinningPlayer(board);
     if (winningPlayer) {
         displayMessage(`Player ${currentPlayer} has won !`);
+        setHTMLvisibilityForInputHumanCoordinates(false);
+        setHTMLvisibilityForInputAiCoordinatesInput(false);
     }
+    else if(checkTie(board)){
+        displayMessage("It's a tie!");
+        setHTMLvisibilityForInputHumanCoordinates(false);
+        setHTMLvisibilityForInputAiCoordinatesInput(false);
+    }
+}
 
-    gameTurn += 1;
-    displayBoard(board);   
-
-    // TODO: add a message stating either
-    // Player X's turn
-    // Player O's turn
-    // It's a tie
-    // Player X won 
-    // Player O won 
-
-    // TODO: add conditions to hide the coordinates screen for 
-    // the human player & show for the button to generate AI 
-    // coordinates
+function generateAIinput(){
+    for(let line=0; line<board.length; line++){
+        for(let column = 0; column<board[line].length; column++){
+            if(board[line][column] === '')
+            switch(line){
+                case 0:
+                    return "A"+(column+1);
+                case 1:
+                    return "B"+(column+1);
+                case 2:
+                    return "C"+(column+1);
+            }
+        }
+    }
 }
 
 // this function is called whenever the user presses
 // the button labeled `Generate AI coordinates`
 function processAICoordinate() {
     console.log(`processAICoordinate()`);
+    currentPlayer = 'pets';
+    
+    let input = generateAIinput();
+    let coordinates = extractCoordinates(input);
+
+    board[coordinates.x][coordinates.y] = currentPlayer;
+
+    gameTurn += 1;
+    displayBoard(board);
+    displayMessage("Player X's turn");
+    setHTMLvisibilityForInputHumanCoordinates(true);
+    setHTMLvisibilityForInputAiCoordinatesInput(false);
+    const winningPlayer = getWinningPlayer(board);
+    if (winningPlayer) {
+        displayMessage(`Player ${currentPlayer} has won !`);
+        setHTMLvisibilityForInputHumanCoordinates(false);
+        setHTMLvisibilityForInputAiCoordinatesInput(false);
+    }
+    else if(checkTie(board)){
+        displayMessage("It's a tie!");
+        setHTMLvisibilityForInputHumanCoordinates(false);
+        setHTMLvisibilityForInputAiCoordinatesInput(false);
+    }
 }
 
 // this function is called when the user clicks on 
 // the button labeled `Restart Game`
 function resetGame() {
-    resetBoard()
+    resetBoard();
     console.log(`resetGame()`);
     setHTMLvisibilityForInputGameMode(true)
     setHTMLvisibilityForInputHumanCoordinates(false);
     setHTMLvisibilityForInputAiCoordinatesInput(false);
+    setHTMLvisibilityForButtonLabeledReset(false);
+    displayBoard(board);
 }
 
 // this function should change from A1..C3 to coordinates
@@ -110,6 +162,7 @@ function extractCoordinates(input) {
         case "C3":
             return { x: 2, y: 2};
     }
+    return undefined;
 
     // this is a sample of what should be returned if the
     // the user had typed `A1`
@@ -118,10 +171,64 @@ function extractCoordinates(input) {
 
 }
 
+function checkLine(line){
+    if(line.toString() == winnerLines[0])
+        return 'X';
+    else if(line.toString() == winnerLines[1])
+        return 'Y';
+    else
+        return undefined;
+}
+
 // this function should return `X` or `O` or undefined (carefull it's not a string )
 // based on interpreting the values in the board variable
 function getWinningPlayer(board) {
+
+    if(board[0][0] === 'diamond' && board[0][1] === 'diamond' && board[0][2] === 'diamond')
+        return "X";
+    else if(board[0][0] === 'pets' && board[0][1] === 'pets' && board[0][2] === 'pets')
+        return "Y";
+    else if(board[1][0] === 'diamond' && board[1][1] === 'diamond' && board[1][2] === 'diamond')
+        return "X";
+    else if(board[1][0] === 'pets' && board[1][1] === 'pets' && board[1][2] === 'pets')
+        return "Y";
+    else if(board[2][0] === 'diamond' && board[2][1] === 'diamond' && board[2][2] === 'diamond')
+        return "X";
+    else if(board[2][0] === 'pets' && board[2][1] === 'pets' && board[2][2] === 'pets')
+        return "Y";   
+    else if(board[0][0] === 'diamond' && board[1][0] === 'diamond' && board[2][0] === 'diamond')
+        return "X";
+    else if( board[0][0] === 'pets' && board[1][0] === 'pets' && board[2][0] === 'pets')
+        return "Y";
+    else if( board[0][1] === 'diamond' && board[1][1] === 'diamond' && board[2][1] === 'diamond')
+        return "X";
+    else if( board[0][1] === 'pets' && board[1][1] === 'pets' && board[2][1] === 'pets')
+        return "Y";
+    else if( board[0][2] === 'diamond' && board[1][2] === 'diamond' && board[2][2] === 'diamond')
+        return "X";
+    else if( board[0][2] === 'pets' && board[1][2] === 'pets' && board[2][2] === 'pets')
+        return "Y";
+    else if( board[0][0] === 'diamond' && board[1][1] === 'diamond' && board[2][2] === 'diamond')
+        return "X";
+    else if( board[0][0] === 'pets' && board[1][1] === 'pets' && board[2][2] === 'pets')
+        return "Y";
+    else if( board[0][2] === 'diamond' && board[1][1] === 'diamond' && board[2][0] === 'diamond')
+        return "X";
+    else if( board[0][2] === 'pets' && board[1][1] === 'pets' && board[2][0] === 'pets')
+        return "Y";
+
     return undefined;
+}
+
+function checkTie(board){
+    for(const line in board){
+        for(const column in board[line]){
+            if(board[line][column] === ''){
+                return false;
+            }
+        } 
+    }
+    return true;
 }
 
         // TASK 2: Enter Coordinates when a Human is Playing
@@ -134,3 +241,5 @@ function getWinningPlayer(board) {
 
     // After the user enters a valid coordinate, the Generate AI coordinates field is made visible on the page if the next player is an AI
 
+
+    
