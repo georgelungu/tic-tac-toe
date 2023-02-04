@@ -153,12 +153,14 @@ function processAICoordinate() {
 
 
 function generateAIinput(board) {
+
+    let opponent = 'diamond'
     // Check if AI can win in the next move
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             if (board[i][j] === '') {
-                board[i][j] = 'pets';
-                if (getUnbeatableAiCoordinates(board, 'pets')) {
+                board[i][j] = currentPlayer;
+                if (getUnbeatableAiCoordinates(board, currentPlayer)) {
                     board[i][j] = '';
                     return { x: i, y: j };
                 }
@@ -167,12 +169,15 @@ function generateAIinput(board) {
         }
     }
 
+    if(currentPlayer === 'diamond')
+        opponent = 'pets'
+
     // Check if the player can win in the next move and block it
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             if (board[i][j] === '') {
-                board[i][j] = 'diamond';
-                if (getUnbeatableAiCoordinates(board, 'diamond')) {
+                board[i][j] = opponent;
+                if (getUnbeatableAiCoordinates(board, opponent)) {
                     board[i][j] = '';
                     return { x: i, y: j };
                 }
