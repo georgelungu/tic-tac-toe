@@ -26,14 +26,23 @@ function setGameMode(selectedValue) {
             isPlayerXHuman = true;
             isPlayerYHuman = false;
             break;
+        case 'ai-ai':
+            isPlayerXHuman = false;
+            isPlayerYHuman = false;
+            break;
     }
     resetBoard();
 
     setHTMLvisibilityForInputGameMode(false);
-    setHTMLvisibilityForInputHumanCoordinates(true);
-    setHTMLvisibilityForInputAiCoordinatesInput(false);
+    if(!isPlayerXHuman){
+        setHTMLvisibilityForInputHumanCoordinates(false);
+        setHTMLvisibilityForInputAiCoordinatesInput(true);
+    }
+    else{
+        setHTMLvisibilityForInputHumanCoordinates(true);
+        setHTMLvisibilityForInputAiCoordinatesInput(false);
+    }
     setHTMLvisibilityForButtonLabeledReset(true);
-    displayMessage("Player X's turn");
 }
 
 // this function is called whenever the user presses the `enter`
@@ -73,11 +82,13 @@ function processHumanCoordinate(input) {
         displayMessage(`Player ${currentPlayer} has won !`);
         setHTMLvisibilityForInputHumanCoordinates(false);
         setHTMLvisibilityForInputAiCoordinatesInput(false);
+        setHTMLvisibilityForButtonLabeledReset(true);
     }
     else if(checkTie(board)){
         displayMessage("It's a tie!");
         setHTMLvisibilityForInputHumanCoordinates(false);
         setHTMLvisibilityForInputAiCoordinatesInput(false);
+        setHTMLvisibilityForButtonLabeledReset(true);
     }
 }
 
@@ -101,7 +112,13 @@ function processHumanCoordinate(input) {
 // the button labeled `Generate AI coordinates`
 function processAICoordinate() {
     console.log(`processAICoordinate()`);
-    currentPlayer = 'pets';
+    if (gameTurn % 2 === 0) {
+        currentPlayer = 'diamond';
+        displayMessage("Player X's turn");
+    } else {
+        currentPlayer = 'pets';
+        displayMessage("Player Y's turn"); 
+    }
     
     //let input = generateAIinput();
     let coordinates = generateAIinput(board);
@@ -110,19 +127,27 @@ function processAICoordinate() {
 
     gameTurn += 1;
     displayBoard(board);
-    displayMessage("Player X's turn");
-    setHTMLvisibilityForInputHumanCoordinates(true);
-    setHTMLvisibilityForInputAiCoordinatesInput(false);
+    //displayMessage("Player X's turn");
+    if(!isPlayerXHuman){
+        setHTMLvisibilityForInputHumanCoordinates(false);
+        setHTMLvisibilityForInputAiCoordinatesInput(true);
+    }
+    else{
+        setHTMLvisibilityForInputHumanCoordinates(true);
+        setHTMLvisibilityForInputAiCoordinatesInput(false);
+    }
     const winningPlayer = getWinningPlayer(board);
     if (winningPlayer) {
         displayMessage(`Player ${currentPlayer} has won !`);
         setHTMLvisibilityForInputHumanCoordinates(false);
         setHTMLvisibilityForInputAiCoordinatesInput(false);
+        setHTMLvisibilityForButtonLabeledReset(true);
     }
     else if(checkTie(board)){
         displayMessage("It's a tie!");
         setHTMLvisibilityForInputHumanCoordinates(false);
         setHTMLvisibilityForInputAiCoordinatesInput(false);
+        setHTMLvisibilityForButtonLabeledReset(true);
     }
 }
 
@@ -200,8 +225,14 @@ function resetGame() {
     gameTurn = 0;
     console.log(`resetGame()`);
     setHTMLvisibilityForInputGameMode(true)
-    setHTMLvisibilityForInputHumanCoordinates(false);
-    setHTMLvisibilityForInputAiCoordinatesInput(false);
+    if(!isPlayerXHuman){
+        setHTMLvisibilityForInputHumanCoordinates(false);
+        setHTMLvisibilityForInputAiCoordinatesInput(true);
+    }
+    else{
+        setHTMLvisibilityForInputHumanCoordinates(true);
+        setHTMLvisibilityForInputAiCoordinatesInput(false);
+    }
     setHTMLvisibilityForButtonLabeledReset(false);
     displayBoard(board);
 }
