@@ -269,15 +269,6 @@ function extractCoordinates(input) {
 
 }
 
-function checkLine(line) {
-    if (line.toString() == winnerLines[0])
-        return 'X';
-    else if (line.toString() == winnerLines[1])
-        return 'Y';
-    else
-        return undefined;
-}
-
 // this function should return `X` or `O` or undefined (carefull it's not a string )
 // based on interpreting the values in the board variable
 function getWinningPlayer(board) {
@@ -328,15 +319,3 @@ function checkTie(board) {
     }
     return true;
 }
-
-        // TASK 2: Enter Coordinates when a Human is Playing
-
-    // During the turn of a human player an input field for entering coordinates is displayed
-
-    // When it is player X's turn, entering the coordinate A1 marks the corresponding position on the board with an X.
-
-    // After the user enters a valid coordinate, the input field for entering coordinates is hidden from the page if the next player is an AI
-
-    // After the user enters a valid coordinate, the Generate AI coordinates field is made visible on the page if the next player is an AI
-
-
