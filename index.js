@@ -158,7 +158,7 @@ function generateAIinput(board) {
         for (let j = 0; j < 3; j++) {
             if (board[i][j] === '') {
                 board[i][j] = 'pets';
-                if (checkWin(board, 'pets')) {
+                if (getUnbeatableAiCoordinates(board, 'pets')) {
                     board[i][j] = '';
                     return { x: i, y: j };
                 }
@@ -172,7 +172,7 @@ function generateAIinput(board) {
         for (let j = 0; j < 3; j++) {
             if (board[i][j] === '') {
                 board[i][j] = 'diamond';
-                if (checkWin(board, 'diamond')) {
+                if (getUnbeatableAiCoordinates(board, 'diamond')) {
                     board[i][j] = '';
                     return { x: i, y: j };
                 }
@@ -195,7 +195,7 @@ function generateAIinput(board) {
     return { x: moves[randomIndex][0], y: moves[randomIndex][1] };
 }
 
-function checkWin(board, symbol) {
+function getUnbeatableAiCoordinates(board, symbol) {
     for (let i = 0; i < 3; i++) {
         if (board[i][0] === symbol && board[i][1] === symbol && board[i][2] === symbol) {
             return true;
