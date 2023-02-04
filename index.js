@@ -81,21 +81,21 @@ function processHumanCoordinate(input) {
     }
 }
 
-function generateAIinput(){
-    for(let line=0; line<board.length; line++){
-        for(let column = 0; column<board[line].length; column++){
-            if(board[line][column] === '')
-            switch(line){
-                case 0:
-                    return "A"+(column+1);
-                case 1:
-                    return "B"+(column+1);
-                case 2:
-                    return "C"+(column+1);
-            }
-        }
-    }
-}
+// function generateAIinput(){
+//     for(let line=0; line<board.length; line++){
+//         for(let column = 0; column<board[line].length; column++){
+//             if(board[line][column] === '')
+//             switch(line){
+//                 case 0:
+//                     return "A"+(column+1);
+//                 case 1:
+//                     return "B"+(column+1);
+//                 case 2:
+//                     return "C"+(column+1);
+//             }
+//         }
+//     }
+// }
 
 // this function is called whenever the user presses
 // the button labeled `Generate AI coordinates`
@@ -103,8 +103,8 @@ function processAICoordinate() {
     console.log(`processAICoordinate()`);
     currentPlayer = 'pets';
     
-    let input = generateAIinput();
-    let coordinates = extractCoordinates(input);
+    //let input = generateAIinput();
+    let coordinates = generateAIinput(board);
 
     board[coordinates.x][coordinates.y] = currentPlayer;
 
@@ -126,10 +126,78 @@ function processAICoordinate() {
     }
 }
 
+
+function generateAIinput(board) {
+    // Check if AI can win in the next move
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (board[i][j] === '') {
+          board[i][j] = 'pets';
+          if (checkWin(board, 'pets')) {
+            board[i][j] = '';
+            return {x:i, y:j};
+          }
+          board[i][j] = '';
+        }
+      }
+    }
+  
+    // Check if the player can win in the next move and block it
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (board[i][j] === '') {
+          board[i][j] = 'diamond';
+          if (checkWin(board, 'diamond')) {
+            board[i][j] = '';
+            return {x:i, y:j};
+          }
+          board[i][j] = '';
+        }
+      }
+    }
+  
+    // Generate a random move
+    let moves = [];
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (board[i][j] === '') {
+          moves.push([i, j]);
+        }
+      }
+    }
+    let randomIndex = Math.floor(Math.random() * moves.length);
+    //return moves[randomIndex];
+    return {x:moves[randomIndex][0], y:moves[randomIndex][1]};
+  }
+  
+  function checkWin(board, symbol) {
+    for (let i = 0; i < 3; i++) {
+      if (board[i][0] === symbol && board[i][1] === symbol && board[i][2] === symbol) {
+        return true;
+      }
+    }
+    for (let j = 0; j < 3; j++) {
+      if (board[0][j] === symbol && board[1][j] === symbol && board[2][j] === symbol) {
+        return true;
+      }
+    }
+    if (board[0][0] === symbol && board[1][1] === symbol && board[2][2] === symbol) {
+      return true;
+    }
+    if (board[0][2] === symbol && board[1][1] === symbol && board[2][0] === symbol) {
+      return true;
+    }
+    return false;
+  }
+  
+
+
+
 // this function is called when the user clicks on 
 // the button labeled `Restart Game`
 function resetGame() {
     resetBoard();
+    gameTurn = 0;
     console.log(`resetGame()`);
     setHTMLvisibilityForInputGameMode(true)
     setHTMLvisibilityForInputHumanCoordinates(false);
